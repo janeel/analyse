@@ -8,7 +8,7 @@ using Xunit.Spec;
 
 namespace Orders.Commands.Test.Orders;
 
-public class WhenValidOrder  : ResultSpec<CreateOrderCommandHandler, CommandResponse>
+public class GivenValidAccount_WhenCreatingOrder  : ResultSpec<CreateOrderCommandHandler, CommandResponse>
 {
     private const int OrderId = 1;
     

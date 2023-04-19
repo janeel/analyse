@@ -8,7 +8,7 @@ using Xunit.Spec;
 
 namespace Orders.Commands.Test.Orders;
 
-public class WhenInvalidAccount : ResultSpec<CreateOrderCommandHandler, CommandResponse>
+public class GivenInvalidAccount_WhenCreatingOrder : ResultSpec<CreateOrderCommandHandler, CommandResponse>
 {
     private CreateOrderCommand buyOrderCommand;
     private Mock<IOrderRepository> orderRepository;
