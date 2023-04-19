@@ -1,0 +1,6 @@
+bin/
+C#/Orders/Orders.API/obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+C#/Orders/.idea/
