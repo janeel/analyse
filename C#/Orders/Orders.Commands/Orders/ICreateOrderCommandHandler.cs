@@ -2,5 +2,5 @@
 
 public interface ICreateOrderCommandHandler
 {
-    Task<int> Create(CreateOrderCommand command);
+    Task<CommandResponse> Create(CreateOrderCommand command);
 }

@@ -2,20 +2,30 @@ using Autofac.Extras.Moq;
 using FluentAssertions;
 using Moq;
 using Orders.Commands.Orders;
+using Orders.Repository.Accounts;
 using Orders.Repository.Orders;
 using Xunit.Spec;
 
 namespace Orders.Commands.Test.Orders;
 
-public class WhenValidAccount  : ResultSpec<CreateOrderCommandHandler, int>
+public class WhenValidOrder  : ResultSpec<CreateOrderCommandHandler, CommandResponse>
 {
-    private CreateOrderCommand buyOrderCommand;
     private const int OrderId = 1;
+    
+    private CreateOrderCommand buyOrderCommand;
+    private Mock<IAccountRepository> accountRepository;
     private Mock<IOrderRepository> orderRepository;
 
     protected override Task ArrangeAsync(AutoMock mock)
     {
-        buyOrderCommand = new CreateOrderCommand(100, "USD", "Buy", "123465789");
+        buyOrderCommand = new CreateOrderCommand(77, "USD", "Buy", "123465789");
+        
+        accountRepository = mock.Mock<IAccountRepository>();
+        accountRepository
+            .Setup(x => x.IsValid(It.IsAny<string>()))
+            .ReturnsAsync(true)
+            .Verifiable();
+        
         orderRepository = mock.Mock<IOrderRepository>();
         orderRepository
             .Setup(x => x.Create(
@@ -25,10 +35,11 @@ public class WhenValidAccount  : ResultSpec<CreateOrderCommandHandler, int>
                 It.IsAny<string>()))
             .ReturnsAsync(OrderId)
             .Verifiable();
+        
         return Task.CompletedTask;
     }
 
-    protected override Task<int> ActAsync(CreateOrderCommandHandler subject) => subject.Create(buyOrderCommand);
+    protected override Task<CommandResponse> ActAsync(CreateOrderCommandHandler subject) => subject.Create(buyOrderCommand);
 
     [Fact]
     public void should_save_to_database()
@@ -41,6 +52,6 @@ public class WhenValidAccount  : ResultSpec<CreateOrderCommandHandler, int>
     [Fact]
     public void should_return_orderId()
     {
-        Result.Should().Be(OrderId);
+        Result.Id.Should().Be(OrderId);
     } 
 }
