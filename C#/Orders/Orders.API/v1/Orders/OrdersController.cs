@@ -16,11 +16,9 @@ public class OrdersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Create(CreateOrderRequest orderRequest)
     {
-        await createOrderCommandHandler.Create(
+        var orderId = await createOrderCommandHandler.Create(
             new CreateOrderCommand(orderRequest.Amount, orderRequest.Currency, orderRequest.BuyOrSell,
                 orderRequest.AccountId));
-
-
-        return Ok();
+        return Ok(orderId);
     }
 }

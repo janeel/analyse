@@ -1,4 +1,5 @@
 using Autofac.Extras.Moq;
+using FluentAssertions;
 using Moq;
 using Orders.Commands.Orders;
 using Orders.Repository.Orders;
@@ -6,9 +7,10 @@ using Xunit.Spec;
 
 namespace Orders.Commands.Test.Orders;
 
-public class CreateOrderCommandHandlerTests  : ResultSpec<CreateOrderCommandHandler, int>
+public class WhenValidAccount  : ResultSpec<CreateOrderCommandHandler, int>
 {
     private CreateOrderCommand buyOrderCommand;
+    private const int OrderId = 1;
     private Mock<IOrderRepository> orderRepository;
 
     protected override Task ArrangeAsync(AutoMock mock)
@@ -16,8 +18,13 @@ public class CreateOrderCommandHandlerTests  : ResultSpec<CreateOrderCommandHand
         buyOrderCommand = new CreateOrderCommand(100, "USD", "Buy", "123465789");
         orderRepository = mock.Mock<IOrderRepository>();
         orderRepository
-            .Setup(x => x.Create(It.IsAny<decimal>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-            .ReturnsAsync(1).Verifiable();
+            .Setup(x => x.Create(
+                It.IsAny<decimal>(), 
+                It.IsAny<string>(), 
+                It.IsAny<string>(), 
+                It.IsAny<string>()))
+            .ReturnsAsync(OrderId)
+            .Verifiable();
         return Task.CompletedTask;
     }
 
@@ -29,5 +36,11 @@ public class CreateOrderCommandHandlerTests  : ResultSpec<CreateOrderCommandHand
         orderRepository.Verify(
             x => x.Create(buyOrderCommand.Amount, buyOrderCommand.Currency, buyOrderCommand.BuyOrSell,
                 buyOrderCommand.AccountId), Times.Once);
+    } 
+    
+    [Fact]
+    public void should_return_orderId()
+    {
+        Result.Should().Be(OrderId);
     } 
 }
