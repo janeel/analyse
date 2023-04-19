@@ -1,5 +1,9 @@
 bin/
 C#/Orders/Orders.API/obj/
+C#/Orders/Orders.Commands.Test/obj/
+C#/Orders/Orders.Commands/obj/
+C#/Orders/Orders.Repository/obj/
+C#/Orders/Orders.sln.DotSettings.user
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
