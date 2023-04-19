@@ -5,6 +5,8 @@ public class CommandResponse
     public int Id { get; }
     public string Error { get; }
 
+    public bool Success => !String.IsNullOrWhiteSpace(Error);
+
     private CommandResponse(int id)
     {
         Id = id;

@@ -20,25 +20,33 @@ public class WhenValidOrder  : ResultSpec<CreateOrderCommandHandler, CommandResp
     {
         buyOrderCommand = new CreateOrderCommand(77, "USD", "Buy", "123465789");
         
-        accountRepository = mock.Mock<IAccountRepository>();
-        accountRepository
-            .Setup(x => x.IsValid(It.IsAny<string>()))
-            .ReturnsAsync(true)
-            .Verifiable();
-        
-        orderRepository = mock.Mock<IOrderRepository>();
-        orderRepository
-            .Setup(x => x.Create(
-                It.IsAny<decimal>(), 
-                It.IsAny<string>(), 
-                It.IsAny<string>(), 
-                It.IsAny<string>()))
-            .ReturnsAsync(OrderId)
-            .Verifiable();
+        SetupValidAccount(mock);
+        SetupSuccessCreateOrderRepository(mock);
         
         return Task.CompletedTask;
     }
+    
+    private static void SetupValidAccount(AutoMock mock)
+    {
+        mock.Mock<IAccountRepository>()
+            .Setup(x => x.IsValid(It.IsAny<string>()))
+            .ReturnsAsync(true)
+            .Verifiable();
+    }
 
+    private void SetupSuccessCreateOrderRepository(AutoMock mock)
+    {
+        orderRepository = mock.Mock<IOrderRepository>();
+        orderRepository
+            .Setup(x => x.Create(
+                It.IsAny<decimal>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<string>()))
+            .ReturnsAsync(OrderId)
+            .Verifiable();
+    }
+    
     protected override Task<CommandResponse> ActAsync(CreateOrderCommandHandler subject) => subject.Create(buyOrderCommand);
 
     [Fact]

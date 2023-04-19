@@ -14,11 +14,16 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create(CreateOrderRequest orderRequest)
+    public async Task<ActionResult> Create([FromBody] CreateOrderRequest orderRequest)
     {
-        var orderId = await createOrderCommandHandler.Create(
-            new CreateOrderCommand(orderRequest.Amount, orderRequest.Currency, orderRequest.BuyOrSell,
-                orderRequest.AccountId));
-        return Ok(orderId);
+        var commandResponse = await createOrderCommandHandler.Create(
+            new CreateOrderCommand(orderRequest.Amount, orderRequest.Currency, orderRequest.BuyOrSell, orderRequest.AccountId));
+        
+        if (!commandResponse.Success)
+        {
+            return UnprocessableEntity(commandResponse.Error);
+        }
+        
+        return Ok(commandResponse.Id);
     }
 }

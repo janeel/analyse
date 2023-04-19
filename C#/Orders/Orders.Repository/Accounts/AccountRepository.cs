@@ -4,6 +4,7 @@ public class AccountRepository : IAccountRepository
 {
     public async Task<bool> IsValid(string accountId)
     {
-        return true;
+        // hard coded to only return true with dummy accountId
+        return accountId == "123465789";
     }
 }

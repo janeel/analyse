@@ -11,21 +11,24 @@ namespace Orders.Commands.Test.Orders;
 public class WhenInvalidAccount : ResultSpec<CreateOrderCommandHandler, CommandResponse>
 {
     private CreateOrderCommand buyOrderCommand;
-    private Mock<IAccountRepository> accountRepository;
     private Mock<IOrderRepository> orderRepository;
 
     protected override Task ArrangeAsync(AutoMock mock)
     {
         buyOrderCommand = new CreateOrderCommand(77, "USD", "Buy", "123465789");
         
-        accountRepository = mock.Mock<IAccountRepository>();
-        accountRepository
+        SetupInvalidAccount(mock);
+        orderRepository = mock.Mock<IOrderRepository>();
+        
+        return Task.CompletedTask;
+    }
+
+    private static void SetupInvalidAccount(AutoMock mock)
+    {
+        mock.Mock<IAccountRepository>()
             .Setup(x => x.IsValid(It.IsAny<string>()))
             .ReturnsAsync(false)
             .Verifiable();
-
-        orderRepository = mock.Mock<IOrderRepository>();
-        return Task.CompletedTask;
     }
 
     protected override Task<CommandResponse> ActAsync(CreateOrderCommandHandler subject) => subject.Create(buyOrderCommand);
